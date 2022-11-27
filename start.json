@@ -1,0 +1,9 @@
+{
+  "apps": [
+    {
+      "name": "DirtWorth",
+      "script": "npm",
+      "args" : "run server"
+    }
+  ]
+}

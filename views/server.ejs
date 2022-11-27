@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DirtCraft Worths</title>
+    <link rel="icon" type="image/png" href="https://i.imgur.com/urgzbbr.png">
+    <link rel="stylesheet" href="/css/index.css"/>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
+</head>
+<body>
+<header>
+    <div class="header">
+        <a href="/">DirtCraft Worths</a>
+    </div>
+    <div class="search">
+        <p class="search-amount"></p>
+        <input type="text" id="search" placeholder="Search...">
+        <span class="material-symbols-outlined" id="search-button">search</span>
+    </div>
+</header>
+<div class="wrapper">
+    <div class="inner-wrapper">
+
+    </div>
+</div>
+<div id="tooltip">
+    <span class="tooltip-title" id="tooltip-text">Tooltip</span>
+</div>
+<template id="mod">
+    <div class="mod">
+        <div class="mod-header">
+            <div class="image"></div>
+            <p class="mod-header-text"></p>
+            <p class="priced-items"></p>
+        </div>
+        <div class="mod-content">
+
+        </div>
+    </div>
+</template>
+<template id="item">
+    <div class="mod-item" data-id="">
+        <div class="image"></div>
+        <div class="name-container tooltip" data-tooltip="">
+
+        </div>
+        <div class="price-container">
+
+        </div>
+    </div>
+</template>
+<script>
+    const server = <%- JSON.stringify(server); %>;
+    document.title = server.display_name + ' Worths';
+
+    const link = document.createElement('link');
+    link.href = `https://justinschweiger.github.io/DirtEssentials-Assets/${server.server}/texture.css`;
+    link.type = "text/css";
+    link.rel = "stylesheet";
+    document.querySelector('head').appendChild(link);
+
+    const wrapper = document.querySelector('.inner-wrapper');
+    let searchAmount = 0;
+
+    for (const mod of server.mods) {
+        const modElem = document.getElementById('mod').content.cloneNode(true);
+
+        modElem.querySelector('.image').classList.add(`${mod.icon.substring(0, mod.icon.indexOf(':'))}__${mod.icon.substring(mod.icon.indexOf(':') + 1)}`);
+        modElem.querySelector('.mod-header-text').textContent = mod.namespace;
+        modElem.querySelector('.priced-items').textContent = mod.items.length;
+
+        for (const item of mod.items) {
+            const itemElem = document.getElementById('item').content.cloneNode(true);
+
+            const hashString = item.hash.length > 0 ? `___${item.hash}` : "";
+            itemElem.querySelector('.image').classList.add(`${item.id.substring(0, item.id.indexOf(':'))}__${item.id.substring(item.id.indexOf(':') + 1)}${hashString}`);
+            itemElem.querySelector('.mod-item').dataset.id = item.id;
+            itemElem.querySelector('.name-container').textContent = item.id.replace(mod.namespace + ':', '');
+            itemElem.querySelector('.price-container').textContent = item.price;
+            itemElem.querySelector('.name-container').dataset.tooltip = item.nbt.length === 0 ? 'No NBT' : item.nbt;
+            modElem.querySelector('.mod-content').appendChild(itemElem);
+            searchAmount++;
+        }
+
+        wrapper.appendChild(modElem);
+    }
+
+    document.querySelector('.search-amount').textContent = searchAmount;
+
+    const tooltip = document.getElementById('tooltip');
+    document.querySelectorAll('.tooltip').forEach(elem => {
+        elem.addEventListener('mouseover', (event) => {
+            tooltip.innerText = event.target.dataset.tooltip;
+            tooltip.style.display = 'flex';
+        });
+
+        elem.addEventListener('mousemove', (event) => {
+            pos(5, -30, event);
+        });
+
+        elem.addEventListener('mouseout', () => {
+            tooltip.style.display = 'none';
+        });
+    });
+
+    function pos(x, y, event) {
+        let posX = 0, posY = 0;
+        const e = event || undefined;
+        if (e.pageX || e.pageY) {
+            posX = e.pageX;
+            posY = e.pageY;
+        } else if (e.clientX || e.clientY) {
+            posX = event.clientX + document.documentElement.scrollLeft + document.body.scrollLeft;
+            posY = event.clientY + document.documentElement.scrollTop + document.body.scrollTop;
+        }
+
+        tooltip.style.position = 'absolute';
+        tooltip.style.top = (posY + y) + 'px';
+        tooltip.style.left = (posX + x) + 'px';
+    }
+
+    tooltip.style.display = 'none';
+
+    document.getElementById('search').addEventListener('keydown', event => {
+        if (event.key !== 'Enter') return;
+
+        if (document.getElementById('search').value === '') {
+            history.pushState({}, null, window.location.origin + window.location.pathname);
+        } else {
+            history.pushState({}, null, window.location.origin + window.location.pathname + "?search=" + document.getElementById('search').value);
+        }
+
+        search();
+    });
+
+    document.getElementById('search-button').addEventListener('click', () => {
+        if (document.getElementById('search').value === '') {
+            history.pushState({}, null, window.location.origin + window.location.pathname);
+        } else {
+            history.pushState({}, null, window.location.origin + window.location.pathname + "?search=" + document.getElementById('search').value);
+        }
+
+        search();
+    });
+
+    if (window.location.search.startsWith('?search=')) {
+        document.getElementById('search').value = window.location.search.replace('?search=', '');
+        search();
+    }
+
+    function search() {
+        const search = document.getElementById('search').value;
+        if (search === '') {
+            let itemsFound = 0;
+            document.querySelectorAll('.mod').forEach(mod => {
+                mod.style.display = 'grid';
+            });
+
+            document.querySelectorAll('.mod-item').forEach(item => {
+                item.style.display = 'flex';
+                itemsFound++;
+            });
+
+            document.querySelectorAll('.mod').forEach(mod => {
+                let count = 0;
+                mod.querySelectorAll('.mod-item').forEach(modItem => {
+                    if (modItem.style.display === 'flex') count++;
+                });
+                mod.querySelector('.priced-items').textContent = count;
+            });
+
+            document.querySelector('.search-amount').textContent = itemsFound;
+            return;
+        }
+
+        let itemsFound = 0;
+        document.querySelectorAll('.mod-item').forEach(item => {
+            if (!item.dataset.id.toLowerCase().includes(search.toLowerCase())) {
+                item.style.display = 'none';
+            } else {
+                item.style.display = 'flex';
+                itemsFound++;
+            }
+        });
+        document.querySelector('.search-amount').textContent = itemsFound;
+
+        // Check all mod headers and hide the ones that don't have any visible items
+        document.querySelectorAll('.mod-header').forEach(modHeader => {
+            let hasChildren = false;
+            modHeader.parentElement.querySelectorAll('.mod-item').forEach(modItem => {
+                if (modItem.style.display === 'flex') hasChildren = true;
+            });
+
+            if (hasChildren) {
+                modHeader.parentElement.style.display = 'grid';
+            } else {
+                modHeader.parentElement.style.display = 'none';
+            }
+        });
+
+        // update the priced items count
+        document.querySelectorAll('.mod').forEach(mod => {
+            let count = 0;
+            mod.querySelectorAll('.mod-item').forEach(item => {
+                if (item.style.display === 'flex') count++;
+            });
+            mod.querySelector('.priced-items').textContent = count;
+        });
+
+    }
+</script>
+</body>
+</html>

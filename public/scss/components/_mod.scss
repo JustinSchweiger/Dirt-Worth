@@ -1,0 +1,91 @@
+.mod {
+  width: 100%;
+  margin-bottom: 30px;
+
+  &-header {
+    height: 60px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: lighten($dark-gray, 10%);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    transition: border-radius 1s;
+
+    .image {
+      width: 32px;
+      height: 32px;
+      margin-right: 20px;
+      margin-left: 20px;
+    }
+
+    &-text {
+      font-family: "Minecraftia", sans-serif;
+    }
+
+    .priced-items {
+      margin-left: auto;
+      margin-right: 20px;
+      font-size: 1.5em;
+      font-family: "Minecraftia", sans-serif;
+      color: $yellow;
+
+      &:before {
+        content: "[";
+        color: $gray;
+      }
+
+      &:after {
+        content: "]";
+        color: $gray;
+      }
+    }
+  }
+
+  .mod-content {
+    padding: 20px;
+    display: grid;
+    gap: 0.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+    transition: height 1s ease-in-out;
+    overflow: hidden;
+    background-color: lighten($gray, 10%);
+    margin-left: 20px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+
+    .mod-item {
+      background-color: $dark-gray;
+      height: 50px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      border-radius: 5px;
+
+      .image {
+        width: 32px;
+        height: 32px;
+        margin-left: 10px;
+        margin-right: 10px;
+      }
+
+      .name-container {
+        font-family: "Minecraftia", sans-serif;
+        font-size: 0.75em;
+      }
+
+      .price-container {
+        font-family: "Minecraftia", sans-serif;
+        margin-left: auto;
+        margin-right: 10px;
+        color: $green;
+
+        &::after {
+          content: "$";
+          color: $gold;
+        }
+      }
+    }
+  }
+}
