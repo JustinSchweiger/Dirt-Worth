@@ -66,7 +66,8 @@
     for (const mod of server.mods) {
         const modElem = document.getElementById('mod').content.cloneNode(true);
 
-        modElem.querySelector('.image').classList.add(`${mod.icon.substring(0, mod.icon.indexOf(':'))}__${mod.icon.substring(mod.icon.indexOf(':') + 1)}`);
+        const imageClass = mod.icon ? `${mod.icon.substring(0, mod.icon.indexOf(':'))}__${mod.icon.substring(mod.icon.indexOf(':') + 1)}` : 'minecraft__barrier_block';
+        modElem.querySelector('.image').classList.add(imageClass);
         modElem.querySelector('.mod-header-text').textContent = mod.namespace;
         modElem.querySelector('.priced-items').textContent = mod.items.length;
 
