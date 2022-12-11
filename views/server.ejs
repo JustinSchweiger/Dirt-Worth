@@ -177,7 +177,7 @@
 
         let itemsFound = 0;
         document.querySelectorAll('.mod-item').forEach(item => {
-            if (!item.dataset.id.toLowerCase().includes(search.toLowerCase())) {
+            if (!item.dataset.id.toLowerCase().includes(search.toLowerCase()) && !item.querySelector('.name-container').textContent.toLowerCase().includes(search.toLowerCase())) {
                 item.style.display = 'none';
             } else {
                 item.style.display = 'flex';
