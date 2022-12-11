@@ -76,7 +76,7 @@
             const hashString = item.hash.length > 0 ? `___${item.hash}` : "";
             itemElem.querySelector('.image').classList.add(`${item.id.substring(0, item.id.indexOf(':'))}__${item.id.substring(item.id.indexOf(':') + 1)}${hashString}`);
             itemElem.querySelector('.mod-item').dataset.id = item.id;
-            itemElem.querySelector('.name-container').textContent = item.id.replace(mod.namespace + ':', '');
+            itemElem.querySelector('.name-container').textContent = item.display_name !== '' ? item.display_name : item.id.replace(mod.namespace + ':', '');
             itemElem.querySelector('.price-container').textContent = item.price;
             itemElem.querySelector('.name-container').dataset.tooltip = item.nbt.length === 0 ? 'No NBT' : item.nbt;
             modElem.querySelector('.mod-content').appendChild(itemElem);
